@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz Template - Single & Multiple Choice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .quiz-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .quiz-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .quiz-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .score-summary {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .score-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .quiz-content {
+            padding: 40px;
+        }
+
+        .question-item {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .question-item.answered {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+
+        .question-item.incorrect {
+            border-color: #dc3545;
+            background: #fff8f8;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .question-number {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .question-status {
+            font-size: 1.2em;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            color: #333;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .options-container {
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            margin: 8px 0;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-item:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option-item.selected {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+
+        .option-item.correct {
+            border-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+            font-weight: bold;
+        }
+
+        .option-item.incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .option-item.user-selected {
+            border-color: #007bff;
+            background: #cce7ff;
+            font-weight: bold;
+        }
+
+        .option-item.user-incorrect {
+            border-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+            text-decoration: line-through;
+        }
+
+        .answer-indicator {
+            margin-left: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .correct-indicator {
+            color: #28a745;
+        }
+
+        .incorrect-indicator {
+            color: #dc3545;
+        }
+
+        .explanation {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation h4 {
+            color: #856404;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            font-size: 1em;
+        }
+
+        .explanation p {
+            color: #533f04;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .action-buttons {
+            background: white;
+            padding: 20px 40px;
+            border-top: 2px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>� Quiz Template</h1>
+            <p>Template hỗ trợ cả câu hỏi single choice và multiple choice</p>
+            <div class="score-summary">
+                <div class="score-item">
+                    <div class="score-number" id="totalQuestions">0</div>
+                    <div class="score-label">Tổng câu</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number" id="answeredCount">0</div>
+                    <div class="score-label">Đã trả lời</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number" id="correctCount">0</div>
+                    <div class="score-label">Đúng</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number" id="scorePercentage">0%</div>
+                    <div class="score-label">Điểm số</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-content" id="quizContent">
+            <!-- 
+            Hướng dẫn sử dụng template:
+            1. Thay đổi tiêu đề và mô tả trong phần quiz-header
+            2. Cập nhật mảng questions với câu hỏi của bạn
+            3. Sử dụng type: "single" cho câu hỏi một đáp án
+            4. Sử dụng type: "multiple" cho câu hỏi nhiều đáp án
+            5. Với single choice: correct = index số (vd: 0, 1, 2)
+            6. Với multiple choice: correct = mảng index (vd: [0, 2, 3])
+            
+            Ví dụ câu hỏi single choice:
+            {
+                id: 1,
+                question: "Câu hỏi của bạn?",
+                options: ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
+                correct: 0, // Đáp án đúng là A (index 0)
+                type: "single",
+                explanation: "Giải thích tại sao đáp án A đúng"
+            }
+            
+            Ví dụ câu hỏi multiple choice:
+            {
+                id: 2,
+                question: "Chọn tất cả đáp án đúng:",
+                options: ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
+                correct: [0, 2], // Đáp án đúng là A và C
+                type: "multiple",
+                explanation: "Giải thích tại sao A và C đúng"
+            }
+            -->
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="resetQuiz()">
+                🔄 Làm lại toàn bộ
+            </button>
+            <div>
+                <button class="btn btn-primary" onclick="showAllAnswers()">
+                    👁️ Hiện tất cả đáp án
+                </button>
+                <button class="btn btn-success" onclick="checkAllAnswers()">
+                    ✅ Kiểm tra kết quả
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /*
+        ===================================================================
+        📝 QUIZ TEMPLATE - HƯỚNG DẪN SỬ DỤNG
+        ===================================================================
+        
+        🎯 TÍNH NĂNG:
+        ✅ Hỗ trợ câu hỏi Single Choice (chọn 1 đáp án)
+        ✅ Hỗ trợ câu hỏi Multiple Choice (chọn nhiều đáp án)
+        ✅ Tự động khóa câu hỏi sau khi trả lời
+        ✅ Hiển thị giải thích ngay lập tức
+        ✅ Theo dõi điểm số realtime
+        ✅ Responsive design cho mọi thiết bị
+        
+        🔧 CÁCH SỬ DỤNG:
+        1. Thay đổi tiêu đề và mô tả trong phần quiz-header
+        2. Thay thế mảng questions bên dưới bằng câu hỏi của bạn
+        3. Sử dụng type: "single" cho câu hỏi một đáp án
+        4. Sử dụng type: "multiple" cho câu hỏi nhiều đáp án
+        
+        📋 CẤU TRÚC CÂU HỎI:
+        - id: Số thứ tự câu hỏi (duy nhất)
+        - question: Nội dung câu hỏi
+        - options: Mảng các đáp án (tối đa 5 đáp án)
+        - correct: Đáp án đúng (số cho single, mảng cho multiple)
+        - type: "single" hoặc "multiple"
+        - explanation: Giải thích chi tiết
+        
+        💡 LƯU Ý:
+        - Index đáp án bắt đầu từ 0 (A=0, B=1, C=2, D=3, E=4)
+        - Multiple choice cần chọn đủ số đáp án đúng mới được khóa
+        - Giải thích hiển thị ngay sau khi hoàn thành câu hỏi
+        ===================================================================
+        */
+        
+       const questions = [
+// ========== CÂU HỎI 1 ==========
+{
+    id: 1,
+    question: "In an operating system, what is the main priority of a time-sharing system compared to a multiprogramming system?",
+    options: [
+        "Lower cost of managing small processes",
+        "Improve CPU performance",
+        "Provide faster response time",
+        "Shorten the burst time of processes"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì ưu tiên chính của hệ thống chia sẻ thời gian so với hệ thống đa chương là cung cấp thời gian phản hồi nhanh hơn."
+},
+
+// ========== CÂU HỎI 2 ==========
+{
+    id: 2,
+    question: "Which early operating system was developed for the UNIVAC I computer and is considered one of the first operating systems?",
+    options: [
+        "MS-DOS",
+        "UNIX",
+        "COBOL",
+        "EDVAC"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì EDVAC được phát triển cho máy tính UNIVAC I và được coi là một trong những hệ điều hành đầu tiên."
+},
+
+// ========== CÂU HỎI 3 ==========
+{
+    id: 3,
+    question: "What is the structure of a disk drive?",
+    options: [
+        "Only one metal platter",
+        "Two metal platters",
+        "One or more metal platters",
+        "Many metal platters"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì ổ đĩa có cấu trúc gồm một hoặc nhiều đĩa kim loại."
+},
+
+// ========== CÂU HỎI 4 ==========
+{
+    id: 4,
+    question: "In Linux, the command ps -aux shows information similar to which function in Windows?",
+    options: [
+        "Start/shutdown",
+        "Start menu > Run > type CMD",
+        "Open Task Manager",
+        "Open Add/Remove Programs"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì lệnh ps -aux trong Linux hiển thị thông tin tương tự như Task Manager trong Windows."
+},
+
+// ========== CÂU HỎI 5 ==========
+{
+    id: 5,
+    question: "Which of the following is not a part of an operating system?",
+    options: [
+        "Performance monitor",
+        "Input/output control program",
+        "Job control program",
+        "Supervisor"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì Performance monitor không phải là thành phần của hệ điều hành."
+},
+
+// ========== CÂU HỎI 6 ==========
+{
+    id: 6,
+    question: "Which of the following is not a main feature of a monolithic operating system?",
+    options: [
+        "Information hiding: Each procedure is hidden from others",
+        "The entire operating system runs as a single program in kernel mode",
+        "The system is organized in layers",
+        "The system is a large program made of linked procedures"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì ẩn thông tin (mỗi thủ tục được ẩn khỏi các thủ tục khác) KHÔNG phải là đặc điểm chính của hệ điều hành monolithic."
+},
+
+// ========== CÂU HỎI 7 ==========
+{
+    id: 7,
+    question: "What is the main role of the kernel in an operating system?",
+    options: [
+        "To provide a user interface",
+        "To manage hardware and offer services to software",
+        "To store user files and data",
+        "To control display and graphics"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì vai trò chính của kernel là quản lý phần cứng và cung cấp dịch vụ cho phần mềm."
+},
+
+// ========== CÂU HỎI 8 ==========
+{
+    id: 8,
+    question: "A computer has 4GB RAM, with 2GB used by the operating system. Each process uses 1GB and is idle 50% of the time (waiting for I/O). What is the CPU utilization percentage?",
+    options: [
+        "75%",
+        "90%",
+        "1%",
+        "50%"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng. Tính toán: Bộ nhớ khả dụng = 4GB - 2GB = 2GB. Số process có thể chạy = 2GB / 1GB = 2 process. CPU utilization = 1 - (0.5)^2 = 1 - 0.25 = 0.75 = 75%."
+},
+
+// ========== CÂU HỎI 9 ==========
+{
+    id: 9,
+    question: "Which of the following process state transitions is illegal?",
+    options: [
+        "Ready → Blocked",
+        "Running → Blocked",
+        "Blocked → Ready",
+        "Running → Ready"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì chuyển đổi từ Ready sang Blocked là không hợp lệ. Tiến trình ở trạng thái Ready không thể chuyển trực tiếp sang Blocked."
+},
+
+// ========== CÂU HỎI 10 ==========
+{
+    id: 10,
+    question: "What is the main function of a Process Control Block (PCB) in process management?",
+    options: [
+        "To display running processes",
+        "To store user programs and data",
+        "To maintain process information like state, program counter, and CPU registers",
+        "To allocate memory to new processes"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì chức năng chính của PCB là duy trì thông tin tiến trình như trạng thái, bộ đếm chương trình và các thanh ghi CPU."
+},
+
+// ========== CÂU HỎI 11 ==========
+{
+    id: 11,
+    question: "Which statement best describes the relationship between threads within a single process?",
+    options: [
+        "Threads are completely independent and share no resources.",
+        "Threads share the same memory space but have their own registers.",
+        "Threads are isolated from one another.",
+        "Threads are tightly integrated and have their own separate memory spaces."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì các thread trong cùng một process chia sẻ không gian bộ nhớ nhưng có các thanh ghi riêng."
+},
+
+// ========== CÂU HỎI 12 ==========
+{
+    id: 12,
+    question: "Which of the following cannot be shared among threads within the same process?",
+    options: [
+        "Process code",
+        "Open files",
+        "Process data",
+        "Thread stack"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì thread stack KHÔNG THỂ được chia sẻ giữa các thread trong cùng một process."
+},
+
+// ========== CÂU HỎI 13 ==========
+{
+    id: 13,
+    question: "What is the preemptive version of the Shortest Job First (SJF) scheduling algorithm called?",
+    options: [
+        "Shortest Process Next",
+        "First-Come, First-Served",
+        "Shortest Remaining Time Next",
+        "Shortest Used Time"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì Shortest Remaining Time Next là phiên bản chiếm ưu thế của SJF."
+},
+
+// ========== CÂU HỎI 14 ==========
+{
+    id: 14,
+    question: "In the Dining Philosophers problem, what do the philosophers represent?",
+    options: [
+        "Real-world philosophers eating at a restaurant",
+        "Concurrent processes competing for shared resources",
+        "Philosophical concepts unrelated to computing",
+        "A type of computer virus"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì trong bài toán Triết gia ăn tối, các triết gia đại diện cho các tiến trình đồng thời cạnh tranh tài nguyên dùng chung."
+},
+
+// ========== CÂU HỎI 15 ==========
+{
+    id: 15,
+    question: "Which memory management technique divides memory into fixed-size partitions?",
+    options: [
+        "Paging",
+        "Contiguous Allocation",
+        "Segmentation",
+        "Virtual Memory Management"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì phân trang (Paging) chia bộ nhớ thành các phân vùng kích thước cố định."
+},
+
+// ========== CÂU HỎI 16 ==========
+{
+    id: 16,
+    question: "Which memory management technique uses a binary representation where each bit represents an allocation unit?",
+    options: [
+        "Bitmap",
+        "Linked List",
+        "Paging",
+        "Partition"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì kỹ thuật Bitmap sử dụng biểu diễn nhị phân trong đó mỗi bit đại diện cho một đơn vị cấp phát."
+},
+
+// ========== CÂU HỎI 17 ==========
+{
+    id: 17,
+    question: "In virtual memory, the virtual address space is divided into pages. What are the corresponding units called in physical memory?",
+    options: [
+        "Page Faults",
+        "Page Frames",
+        "Page Tables",
+        "Paging"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì trong bộ nhớ ảo, các đơn vị tương ứng trong bộ nhớ vật lý được gọi là Page Frames."
+},
+
+// ========== CÂU HỎI 18 ==========
+{
+    id: 18,
+    question: "A computer uses a 32-bit virtual address with a two-level page table. The address is divided into a 10-bit top-level (PT1), a 10-bit second-level (PT2), and an offset. Given the virtual address 0x00403008, what are the values for PT1, PT2, and offset?",
+    options: [
+        "PT1 = 1; PT2 = 3; offset = 8",
+        "PT1 = 1; PT2 = 1; offset = 8",
+        "PT1 = 4; PT2 = 3; offset = 8",
+        "PT1 = 4; PT2 = 1; offset = 8"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng. Tính toán: 0x00403008 = 0000 0000 0100 0000 0011 0000 0000 1000. PT1 (10 bit đầu) = 1, PT2 (10 bit tiếp) = 3, offset (12 bit cuối) = 8."
+},
+
+// ========== CÂU HỎI 19 ==========
+{
+    id: 19,
+    question: "In which page replacement algorithm can the page fault rate increase even if more frames are allocated (Belady's anomaly)?",
+    options: [
+        "FIFO",
+        "LRU",
+        "NRU",
+        "OPT"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì thuật toán thay thế trang FIFO có thể xảy ra hiện tượng Belady's anomaly."
+},
+
+// ========== CÂU HỎI 20 ==========
+{
+    id: 20,
+    question: "If LRU (Least Recently Used) page replacement is used with three page frames, how many page faults occur for the reference string: 7, 0, 1, 2, 0, 3 (assuming initially empty frames)?",
+    options: [
+        "5",
+        "4",
+        "6",
+        "3"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng. Tính toán với chuỗi tham chiếu 7,0,1,2,0,3 và 3 khung trang sử dụng LRU sẽ cho 5 lỗi trang."
+},
+
+// ========== CÂU HỎI 21 ==========
+{
+    id: 21,
+    question: "When a new process is created in a paging system, which of the following is needed to determine the program size and create the page table?",
+    options: [
+        "Process creation time",
+        "Process execution time",
+        "Page fault time",
+        "Process termination time"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì khi tạo process mới trong hệ thống phân trang, thời điểm tạo process được sử dụng để xác định kích thước chương trình và tạo bảng trang."
+},
+
+// ========== CÂU HỎI 22 ==========
+{
+    id: 22,
+    question: "Which of the following best describes the difference between a process and a thread in the Windows operating system?",
+    options: [
+        "A process contains multiple threads and shares resources, while a thread is an independent execution unit within a process.",
+        "A process is a program in execution, while a thread is a sequence of instructions that can execute independently.",
+        "A process and a thread are essentially the same in Windows OS, with no significant difference between them.",
+        "A process represents system resources, while a thread is responsible for user interface interactions."
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì một process chứa nhiều thread và chia sẻ tài nguyên, còn thread là đơn vị thực thi độc lập trong một process."
+},
+
+// ========== CÂU HỎI 23 ==========
+{
+    id: 23,
+    question: "What is segmentation with paging, and how does it enhance memory management?",
+    options: [
+        "A technique for managing multiple memory segments simultaneously.",
+        "A method that combines the flexibility of segmentation with the efficiency of paging.",
+        "A scheme that uses fixed-size pages to allocate memory.",
+        "A scheduling algorithm for thread management."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì phân đoạn với phân trang kết hợp tính linh hoạt của phân đoạn với hiệu quả của phân trang."
+},
+
+// ========== CÂU HỎI 24 ==========
+{
+    id: 24,
+    question: "When a process creates a file, what is assigned to the file?",
+    options: [
+        "A name",
+        "A thread",
+        "A process",
+        "A space"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì khi một process tạo file, một tên được gán cho file đó."
+},
+
+// ========== CÂU HỎI 25 ==========
+{
+    id: 25,
+    question: "What is the state of the file when the creating process finishes, and the file becomes accessible to other processes?",
+    options: [
+        "Exit",
+        "Terminate",
+        "Exist",
+        "Suspend"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì trạng thái của file là Exist (tồn tại) khi process tạo kết thúc và file có thể được truy cập bởi các process khác."
+},
+
+// ========== CÂU HỎI 26 ==========
+{
+    id: 26,
+    question: "In file access systems, random access files are essential for many applications, such as database systems. What two methods are used to specify where to start reading?",
+    options: [
+        "Write and Read",
+        "Write and Seek",
+        "Read and Seek",
+        "Read and Write"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì Read và Seek là hai phương thức được sử dụng để chỉ định nơi bắt đầu đọc."
+},
+
+// ========== CÂU HỎI 27 ==========
+{
+    id: 27,
+    question: "The simplest form of a directory system has one directory containing all the files. It is called:",
+    options: [
+        "Root directory",
+        "User directory",
+        "Parent directory",
+        "Current directory"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì hệ thống thư mục đơn giản nhất, nơi một thư mục chứa tất cả các file, được gọi là thư mục gốc (Root directory)."
+},
+
+// ========== CÂU HỎI 28 ==========
+{
+    id: 28,
+    question: "Sector 0 of the disk is called:",
+    options: [
+        "DMA",
+        "MBR",
+        "FAT",
+        "NTFS"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì sector 0 của đĩa được gọi là MBR (Master Boot Record) và được sử dụng để khởi động máy tính."
+},
+
+// ========== CÂU HỎI 29 ==========
+{
+    id: 29,
+    question: "Disks can be divided into one or more partitions. What is the first block of every partition called?",
+    options: [
+        "Boot block",
+        "Free block",
+        "Superblock",
+        "MBR"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì khối đầu tiên của mỗi partition được gọi là boot block."
+},
+
+// ========== CÂU HỎI 30 ==========
+{
+    id: 30,
+    question: "In file systems, what is sector 0 of the disk called?",
+    options: [
+        "Boot block",
+        "Superblock",
+        "MBR (Master Boot Record)",
+        "Free space management"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì sector 0 của đĩa được gọi là MBR (Master Boot Record)."
+},
+
+// ========== CÂU HỎI 31 ==========
+{
+    id: 31,
+    question: "Which file access method is often used to optimize access to large files in a file system?",
+    options: [
+        "Sequential access",
+        "Direct access",
+        "Indexed access",
+        "Linked access"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì truy cập được lập chỉ mục (Indexed access) thường được sử dụng để tối ưu hóa truy cập các file lớn."
+},
+
+// ========== CÂU HỎI 32 ==========
+{
+    id: 32,
+    question: "In Windows 95, what is the maximum partition size if the FAT type is FAT-16 and the block size is 4 KB?",
+    options: [
+        "128MB",
+        "256MB",
+        "512MB",
+        "1024MB"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì với FAT-16 và kích thước block 4 KB, kích thước partition tối đa là 256MB."
+},
+
+// ========== CÂU HỎI 33 ==========
+{
+    id: 33,
+    question: "In memory-mapped I/O, to prevent software from entering an infinite loop while waiting for a device, which hardware feature can be used?",
+    options: [
+        "Selectively able caching",
+        "Selectively disable buffer",
+        "Selectively able buffer",
+        "Selectively disable caching"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì trong I/O được ánh xạ bộ nhớ, để ngăn phần mềm vào vòng lặp vô hạn khi chờ thiết bị, tính năng phần cứng 'Selectively disable caching' có thể được sử dụng."
+},
+
+// ========== CÂU HỎI 34 ==========
+{
+    id: 34,
+    question: "What are the two main types of I/O devices?",
+    options: [
+        "Block devices and sequence devices",
+        "Block devices and character devices",
+        "Character devices and I/O devices",
+        "Character devices and digital devices"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì hai loại thiết bị I/O chính là thiết bị khối (Block devices) và thiết bị ký tự (Character devices)."
+},
+
+// ========== CÂU HỎI 35 ==========
+{
+    id: 35,
+    question: "In a DMA transfer cycle, what is the operation called when the DMA controller acquires the bus, performs multiple transfers, and then releases the bus?",
+    options: [
+        "Fly-by mode",
+        "Word-at-a-time mode",
+        "Burst mode",
+        "Caching mode"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì trong chu kỳ chuyển DMA, hoạt động khi bộ điều khiển DMA chiếm bus, thực hiện nhiều lần chuyển và sau đó giải phóng bus được gọi là Burst mode."
+},
+
+// ========== CÂU HỎI 36 ==========
+{
+    id: 36,
+    question: "Blu-ray discs are an example of which type of I/O device?",
+    options: [
+        "Block device",
+        "Disk device",
+        "Input device",
+        "Character device"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì đĩa Blu-ray là ví dụ của thiết bị khối (Block device)."
+},
+
+// ========== CÂU HỎI 37 ==========
+{
+    id: 37,
+    question: "Which I/O mode is most suitable for transferring data between memory and I/O devices without involving the CPU?",
+    options: [
+        "Direct Memory Access",
+        "Programmed I/O",
+        "Interrupt-driven I/O",
+        "Polling"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì DMA phù hợp nhất để chuyển dữ liệu giữa bộ nhớ và thiết bị I/O mà không liên quan đến CPU."
+},
+
+// ========== CÂU HỎI 38 ==========
+{
+    id: 38,
+    question: "Which of the following is NOT a responsibility of the Device-Independent I/O Software layer?",
+    options: [
+        "Uniform interfacing for device drivers",
+        "Allocating and releasing dedicated devices",
+        "Providing a device-independent block size",
+        "Allocating port numbers to I/O devices",
+        "Error handling",
+        "Buffering"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì cấp phát số cổng cho thiết bị I/O KHÔNG phải là trách nhiệm của lớp phần mềm I/O độc lập thiết bị."
+},
+
+// ========== CÂU HỎI 39 ==========
+{
+    id: 39,
+    question: "What is the term for the time taken to move the disk arm to the proper cylinder?",
+    options: [
+        "Seek time",
+        "Position time",
+        "Rotational delay",
+        "Transfer time"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì thời gian di chuyển cần đĩa đến cylinder thích hợp được gọi là seek time."
+},
+
+// ========== CÂU HỎI 40 ==========
+{
+    id: 40,
+    question: "What is the main function of a watchdog timer in an operating system?",
+    options: [
+        "Measure the performance of user programs and evaluate them",
+        "Detect system crashes and reset the system if necessary",
+        "Schedule tasks to execute at predetermined real-time intervals",
+        "Manage memory allocation"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì chức năng chính của watchdog timer là phát hiện sự cố hệ thống và thiết lập lại hệ thống nếu cần."
+},
+
+// ========== CÂU HỎI 41 ==========
+{
+    id: 41,
+    question: "The first general-purpose electronic computer, the ENIAC, had 18,000 vacuum tubes and consumed watts of power.",
+    options: [
+        "1,400,000",
+        "140,000",
+        "14,000",
+        "1,400"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì ENIAC tiêu thụ 140,000 watt năng lượng."
+},
+
+// ========== CÂU HỎI 42 ==========
+{
+    id: 42,
+    question: "If a process has begun to burn a Blu-ray, suddenly taking the Blu-ray recorder away from it and giving it to another process will result in a garbled Blu-ray. What does the scenario above indicate?",
+    options: [
+        "It's an Un-preemptable resource",
+        "It's a Preemptable resource",
+        "It's a Non-sharable resource",
+        "It's a Non-preemptable resource"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì đây là tài nguyên không thể chiếm đoạt (Non-preemptable resource)."
+},
+
+// ========== CÂU HỎI 43 ==========
+{
+    id: 43,
+    question: "What is a nonpreemptable resource?",
+    options: [
+        "The one that can be taken away from its current owner with potentially causing failure.",
+        "The one that cannot be taken away from its current owner with potentially causing failure.",
+        "The one that can be taken away from its current owner without potentially causing failure.",
+        "The one that cannot be taken away from its current owner without potentially causing failure."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì tài nguyên không thể chiếm đoạt là tài nguyên không thể lấy khỏi chủ sở hữu hiện tại mà không gây ra lỗi tiềm ẩn."
+},
+
+// ========== CÂU HỎI 44 ==========
+{
+    id: 44,
+    question: "What does 'no preemption' imply in the context of deadlocks?",
+    options: [
+        "Resources can be preempted from one process to another.",
+        "Resources cannot be preempted once allocated.",
+        "Processes can be terminated to free up resources.",
+        "Resources are allocated in a circular manner."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì 'no preemption' ngụ ý rằng tài nguyên không thể bị chiếm đoạt một khi đã được cấp phát."
+},
+
+// ========== CÂU HỎI 45 ==========
+{
+    id: 45,
+    question: "In deadlock, what is no-preemption condition?",
+    options: [
+        "Processes currently holding resources that were granted earlier can request new resources.",
+        "Resources previously granted cannot be forcibly taken away from a process. They must be explicitly released by the process holding them.",
+        "There must be a circular list of two or more processes, each of which is waiting for a resource held by the next member of the chain.",
+        "Each resource is either currently assigned to exactly one process or is available."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì điều kiện không chiếm đoạt trong deadlock có nghĩa là tài nguyên đã được cấp phát không thể bị lấy đi một cách cưỡng chế."
+},
+
+// ========== CÂU HỎI 46 ==========
+{
+    id: 46,
+    question: "What is the Ostrich algorithm?",
+    options: [
+        "A deadlock recovery algorithm",
+        "A deadlock dealing algorithm",
+        "A deadlock detection algorithm",
+        "A deadlock avoidance algorithm"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì thuật toán Ostrich là một thuật toán xử lý deadlock."
+},
+
+// ========== CÂU HỎI 47 ==========
+{
+    id: 47,
+    question: "Which tool is used for both Deadlock Detection & Recovery and Deadlock Avoidance?",
+    options: [
+        "Resource Request Matrix",
+        "Resource Allocation Matrix",
+        "Resource Graph",
+        "Pie chart"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì Resource Graph được sử dụng cho cả phát hiện & phục hồi deadlock và tránh deadlock."
+},
+
+// ========== CÂU HỎI 48 ==========
+{
+    id: 48,
+    question: "Who is responsible for the Banker's algorithm?",
+    options: [
+        "Dijkstra",
+        "Zobel",
+        "Newton",
+        "Ostrich"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì Dijkstra chịu trách nhiệm cho thuật toán Banker."
+},
+
+// ========== CÂU HỎI 49 ==========
+{
+    id: 49,
+    question: "Which condition, if not present in the system, can help prevent deadlocks?",
+    options: [
+        "Mutual exclusion",
+        "Hold and wait",
+        "No preemption",
+        "Circular wait"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì nếu điều kiện chờ đợi vòng tròn (Circular wait) không tồn tại thì sẽ giúp ngăn chặn deadlock."
+},
+
+// ========== CÂU HỎI 50 ==========
+{
+    id: 50,
+    question: "Which resource allocation method can help prevent deadlocks by requiring processes to request and hold all necessary resources at once?",
+    options: [
+        "Contiguous allocation",
+        "Clustered allocation",
+        "Linked allocation",
+        "Resource allocation"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì phương pháp cấp phát tài nguyên yêu cầu các process yêu cầu và giữ tất cả tài nguyên cần thiết cùng một lúc có thể giúp ngăn chặn deadlock."
+}
+];
+
+        let userAnswers = {};
+        let showingAnswers = false;
+        let answeredQuestions = new Set(); // Add tracking
+
+        function initQuiz() {
+            // Tự động cập nhật tổng số câu hỏi
+            document.getElementById('totalQuestions').textContent = questions.length;
+            
+            renderAllQuestions();
+            updateScoreSummary();
+        }
+
+        function renderAllQuestions() {
+            const quizContent = document.getElementById('quizContent');
+            
+            quizContent.innerHTML = questions.map(question => `
+                <div class="question-item" id="question-${question.id}">
+                    <div class="question-header">
+                        <div class="question-number">Câu ${question.id}</div>
+                        <div class="question-status" id="status-${question.id}">❓</div>
+                    </div>
+                    
+                    <div class="question-text">${question.question}</div>
+                    
+                    <div class="options-container">
+                        ${question.options.map((option, index) => `
+                            <div class="option-item" onclick="selectOption(${question.id}, ${index})">
+                                ${question.type === 'multiple' ? 
+                                    `<input type="checkbox" class="option-checkbox" id="q${question.id}-opt${index}" onchange="selectOption(${question.id}, ${index})">` :
+                                    `<input type="radio" name="q${question.id}" class="option-radio" id="q${question.id}-opt${index}" onchange="selectOption(${question.id}, ${index})">`
+                                }
+                                <label class="option-text" for="q${question.id}-opt${index}">
+                                    ${String.fromCharCode(65 + index)}. ${option}
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="explanation" id="explanation-${question.id}">
+                        <h4><span class="icon">💡</span>Giải thích:</h4>
+                        <p>${question.explanation}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectOption(questionId, optionIndex) {
+            // Prevent changes if question already answered
+            if (answeredQuestions.has(questionId)) {
+                return;
+            }
+            
+            const question = questions.find(q => q.id === questionId);
+            const questionElement = document.getElementById(`question-${questionId}`);
+            const optionElement = document.getElementById(`q${questionId}-opt${optionIndex}`);
+            
+            if (showingAnswers) return;
+            
+            if (question.type === 'multiple') {
+                // Handle multiple choice
+                if (!userAnswers[questionId]) {
+                    userAnswers[questionId] = [];
+                }
+                
+                if (optionElement.checked) {
+                    if (!userAnswers[questionId].includes(optionIndex)) {
+                        userAnswers[questionId].push(optionIndex);
+                    }
+                } else {
+                    userAnswers[questionId] = userAnswers[questionId].filter(idx => idx !== optionIndex);
+                }
+                
+                // Check if user has selected the correct number of answers for multiple choice
+                const correctAnswers = Array.isArray(question.correct) ? question.correct : [question.correct];
+                if (userAnswers[questionId] && userAnswers[questionId].length === correctAnswers.length) {
+                    answeredQuestions.add(questionId);
+                    disableQuestionOptions(questionId);
+                    showQuestionFeedback(questionId);
+                } else {
+                    hideQuestionFeedback(questionId);
+                }
+            } else {
+                // Handle single choice - lock immediately
+                userAnswers[questionId] = optionIndex;
+                answeredQuestions.add(questionId);
+                disableQuestionOptions(questionId);
+                showQuestionFeedback(questionId);
+            }
+            
+            updateQuestionStatus(questionId);
+            updateScoreSummary();
+        }
+
+        function disableQuestionOptions(questionId) {
+            const optionElements = document.querySelectorAll(`[id^="q${questionId}-opt"]`);
+            optionElements.forEach(element => {
+                element.disabled = true;
+                element.parentElement.style.pointerEvents = 'none';
+                element.parentElement.style.opacity = '0.7';
+            });
+        }
+
+        function showQuestionFeedback(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            const explanationElement = document.getElementById(`explanation-${questionId}`);
+            const isCorrect = checkAnswer(questionId);
+            
+            // Show explanation
+            explanationElement.classList.add('show');
+            
+            // Update option styling to show correct/incorrect
+            const optionElements = document.querySelectorAll(`[id^="q${questionId}-opt"]`);
+            optionElements.forEach((element, index) => {
+                const optionContainer = element.parentElement;
+                optionContainer.classList.remove('correct', 'incorrect', 'user-selected', 'user-incorrect');
+                
+                // Remove existing indicators
+                const existingIndicator = optionContainer.querySelector('.answer-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+                
+                const userAnswer = userAnswers[questionId];
+                const isUserSelection = question.type === 'multiple' ? 
+                    (userAnswer && userAnswer.includes(index)) : 
+                    (userAnswer === index);
+                
+                if (question.type === 'multiple') {
+                    const correctAnswers = Array.isArray(question.correct) ? question.correct : [question.correct];
+                    
+                    if (correctAnswers.includes(index)) {
+                        // This is a correct answer
+                        optionContainer.classList.add('correct');
+                        const indicator = document.createElement('span');
+                        indicator.className = 'answer-indicator correct-indicator';
+                        indicator.textContent = isUserSelection ? '✓ Đúng' : '✓ Đáp án đúng';
+                        optionContainer.appendChild(indicator);
+                    } else if (isUserSelection) {
+                        // User selected wrong answer
+                        optionContainer.classList.add('user-incorrect');
+                        const indicator = document.createElement('span');
+                        indicator.className = 'answer-indicator incorrect-indicator';
+                        indicator.textContent = '✗ Sai';
+                        optionContainer.appendChild(indicator);
+                    }
+                } else {
+                    if (index === question.correct) {
+                        // This is the correct answer
+                        optionContainer.classList.add('correct');
+                        const indicator = document.createElement('span');
+                        indicator.className = 'answer-indicator correct-indicator';
+                        indicator.textContent = isUserSelection ? '✓ Đúng' : '✓ Đáp án đúng';
+                        optionContainer.appendChild(indicator);
+                    } else if (isUserSelection) {
+                        // User selected wrong answer
+                        optionContainer.classList.add('user-incorrect');
+                        const indicator = document.createElement('span');
+                        indicator.className = 'answer-indicator incorrect-indicator';
+                        indicator.textContent = '✗ Sai';
+                        optionContainer.appendChild(indicator);
+                    }
+                }
+            });
+        }
+
+        function hideQuestionFeedback(questionId) {
+            const explanationElement = document.getElementById(`explanation-${questionId}`);
+            explanationElement.classList.remove('show');
+            
+            // Remove feedback styling from options
+            const optionElements = document.querySelectorAll(`[id^="q${questionId}-opt"]`);
+            optionElements.forEach((element, index) => {
+                const optionContainer = element.parentElement;
+                optionContainer.classList.remove('correct', 'incorrect', 'user-selected', 'user-incorrect');
+                
+                // Remove existing indicators
+                const existingIndicator = optionContainer.querySelector('.answer-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+            });
+        }
+
+        function updateQuestionStatus(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            const statusElement = document.getElementById(`status-${questionId}`);
+            const questionElement = document.getElementById(`question-${questionId}`);
+            
+            // Check if question is properly answered
+            let isAnswered = false;
+            if (question.type === 'multiple') {
+                const correctAnswers = Array.isArray(question.correct) ? question.correct : [question.correct];
+                isAnswered = userAnswers[questionId] && userAnswers[questionId].length === correctAnswers.length;
+            } else {
+                isAnswered = userAnswers[questionId] !== undefined;
+            }
+            
+            if (isAnswered) {
+                if (showingAnswers || hasQuestionFeedback(questionId)) {
+                    const isCorrect = checkAnswer(questionId);
+                    statusElement.textContent = isCorrect ? '✅' : '❌';
+                    questionElement.className = `question-item ${isCorrect ? 'answered' : 'incorrect'}`;
+                } else {
+                    statusElement.textContent = '✏️';
+                    questionElement.className = 'question-item answered';
+                }
+            } else {
+                statusElement.textContent = '❓';
+                questionElement.className = 'question-item';
+            }
+        }
+
+        function hasQuestionFeedback(questionId) {
+            const explanationElement = document.getElementById(`explanation-${questionId}`);
+            return explanationElement.classList.contains('show');
+        }
+
+        function checkAnswer(questionId) {
+            const question = questions.find(q => q.id === questionId);
+            const userAnswer = userAnswers[questionId];
+            
+            if (question.type === 'multiple') {
+                if (!userAnswer || userAnswer.length === 0) return false;
+                const correctAnswers = Array.isArray(question.correct) ? question.correct : [question.correct];
+                return userAnswer.length === correctAnswers.length && 
+                       userAnswer.every(ans => correctAnswers.includes(ans));
+            } else {
+                return userAnswer === question.correct;
+            }
+        }
+
+        function updateScoreSummary() {
+            const answeredCount = Object.keys(userAnswers).filter(qId => {
+                const question = questions.find(q => q.id == qId);
+                const answer = userAnswers[qId];
+                return answer !== undefined && 
+                       (question.type === 'single' || (question.type === 'multiple' && answer.length > 0));
+            }).length;
+            
+            const correctCount = Object.keys(userAnswers).filter(qId => checkAnswer(parseInt(qId))).length;
+            const percentage = answeredCount > 0 ? Math.round((correctCount / questions.length) * 100) : 0;
+            
+            document.getElementById('answeredCount').textContent = answeredCount;
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('scorePercentage').textContent = percentage + '%';
+        }
+
+        function showAllAnswers() {
+            showingAnswers = true;
+            
+            questions.forEach(question => {
+                const explanationElement = document.getElementById(`explanation-${question.id}`);
+                explanationElement.classList.add('show');
+                
+                // Highlight correct answers only
+                const optionElements = document.querySelectorAll(`[id^="q${question.id}-opt"]`);
+                optionElements.forEach((element, index) => {
+                    const optionContainer = element.parentElement;
+                    optionContainer.classList.remove('correct', 'incorrect', 'selected', 'user-selected', 'user-incorrect');
+                    
+                    // Remove existing indicators
+                    const existingIndicator = optionContainer.querySelector('.answer-indicator');
+                    if (existingIndicator) {
+                        existingIndicator.remove();
+                    }
+                    
+                    if (question.type === 'multiple') {
+                        const correctAnswers = Array.isArray(question.correct) ? question.correct : [question.correct];
+                        if (correctAnswers.includes(index)) {
+                            optionContainer.classList.add('correct');
+                            const indicator = document.createElement('span');
+                            indicator.className = 'answer-indicator correct-indicator';
+                            indicator.textContent = '✓ Đúng';
+                            optionContainer.appendChild(indicator);
+                        }
+                    } else {
+                        if (index === question.correct) {
+                            optionContainer.classList.add('correct');
+                            const indicator = document.createElement('span');
+                            indicator.className = 'answer-indicator correct-indicator';
+                            indicator.textContent = '✓ Đáp án đúng';
+                            optionContainer.appendChild(indicator);
+                        }
+                    }
+                    
+                    // Disable further interactions
+                    element.disabled = true;
+                });
+                
+                updateQuestionStatus(question.id);
+            });
+            
+            updateScoreSummary();
+        }
+
+        function checkAllAnswers() {
+            showingAnswers = true;
+            
+            questions.forEach(question => {
+                const explanationElement = document.getElementById(`explanation-${question.id}`);
+                explanationElement.classList.add('show');
+                
+                // Show user answers vs correct answers
+                const optionElements = document.querySelectorAll(`[id^="q${question.id}-opt"]`);
+                optionElements.forEach((element, index) => {
+                    const optionContainer = element.parentElement;
+                    optionContainer.classList.remove('correct', 'incorrect', 'selected', 'user-selected', 'user-incorrect');
+                    
+                    // Remove existing indicators
+                    const existingIndicator = optionContainer.querySelector('.answer-indicator');
+                    if (existingIndicator) {
+                        existingIndicator.remove();
+                    }
+                    
+                    const userAnswer = userAnswers[question.id];
+                    const isUserSelection = question.type === 'multiple' ? 
+                        (userAnswer && userAnswer.includes(index)) : 
+                        (userAnswer === index);
+                    
+                    if (question.type === 'multiple') {
+                        const correctAnswers = Array.isArray(question.correct) ? question.correct : [question.correct];
+                        
+                        if (correctAnswers.includes(index)) {
+                            // This is a correct answer
+                            optionContainer.classList.add('correct');
+                            const indicator = document.createElement('span');
+                            indicator.className = 'answer-indicator correct-indicator';
+                            indicator.textContent = isUserSelection ? '✓ Đúng - Bạn đã chọn' : '✓ Đáp án đúng';
+                            optionContainer.appendChild(indicator);
+                        } else if (isUserSelection) {
+                            // User selected wrong answer
+                            optionContainer.classList.add('user-incorrect');
+                            const indicator = document.createElement('span');
+                            indicator.className = 'answer-indicator incorrect-indicator';
+                            indicator.textContent = '✗ Sai - Bạn đã chọn';
+                            optionContainer.appendChild(indicator);
+                        }
+                    } else {
+                        if (index === question.correct) {
+                            // This is the correct answer
+                            optionContainer.classList.add('correct');
+                            const indicator = document.createElement('span');
+                            indicator.className = 'answer-indicator correct-indicator';
+                            indicator.textContent = isUserSelection ? '✓ Đúng - Bạn đã chọn' : '✓ Đáp án đúng';
+                            optionContainer.appendChild(indicator);
+                        } else if (isUserSelection) {
+                            // User selected wrong answer
+                            optionContainer.classList.add('user-incorrect');
+                            const indicator = document.createElement('span');
+                            indicator.className = 'answer-indicator incorrect-indicator';
+                            indicator.textContent = '✗ Sai - Bạn đã chọn';
+                            optionContainer.appendChild(indicator);
+                        }
+                    }
+                    
+                    // Disable further interactions
+                    element.disabled = true;
+                });
+                
+                updateQuestionStatus(question.id);
+            });
+            
+            updateScoreSummary();
+        }
+
+        function resetQuiz() {
+            userAnswers = {};
+            showingAnswers = false;
+            answeredQuestions.clear();
+            
+            // Reset all form elements
+            document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+                input.checked = false;
+                input.disabled = false;
+                input.parentElement.style.pointerEvents = 'auto';
+                input.parentElement.style.opacity = '1';
+            });
+            
+            // Hide all explanations and feedback
+            questions.forEach(question => {
+                hideQuestionFeedback(question.id);
+            });
+            
+            // Reset all option styling and remove indicators
+            document.querySelectorAll('.option-item').forEach(option => {
+                option.classList.remove('correct', 'incorrect', 'selected', 'user-selected', 'user-incorrect');
+                const indicator = option.querySelector('.answer-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            });
+            
+            // Update all question statuses
+            questions.forEach(question => {
+                updateQuestionStatus(question.id);
+            });
+            
+            updateScoreSummary();
+        }
+
+        // Initialize quiz when page loads
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Điều Hướng Tệp</title>
+    <!-- Tải Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Thiết lập font Inter */
+        html {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Đảm bảo toàn bộ chiều cao cho nền */
+        body {
+            min-height: 100vh;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-blue': '#4F46E5',
+                        'secondary-gray': '#1F2937',
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-900 text-gray-100 flex items-start justify-center p-4 sm:p-8">
+
+    <div class="w-full max-w-2xl bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl border border-gray-700">
+        <!-- Tiêu đề -->
+        <header class="mb-8 border-b border-gray-700 pb-4">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-primary-blue text-center tracking-tight">
+                Danh Sách Tệp Điều Hướng
+            </h1>
+            <p class="text-center text-gray-400 mt-2">
+                Nhấn vào tên tệp để mở tài liệu tương ứng.
+            </p>
+        </header>
+
+        <!-- Danh sách Tệp -->
+        <ul class="space-y-4">
+            <!-- Dùng JavaScript để lặp qua danh sách tệp nếu muốn động, nhưng ở đây ta liệt kê tĩnh theo yêu cầu -->
+            
+            <!-- Hàm hiển thị biểu tượng tài liệu SVG -->
+            <script>
+                function documentIcon() {
+                    return `
+                        <svg class="w-6 h-6 text-primary-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    `;
+                }
+            </script>
+
+            <!-- Tệp 1 -->
+            <li>
+                <a href="OSG202_FA24_FE_307014_.html" class="flex items-center p-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-[1.02]">
+                    <div class="mr-4" x-html="documentIcon()">
+                        <!-- Biểu tượng tài liệu -->
+                        <svg class="w-6 h-6 text-primary-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="text-lg font-medium truncate block">OSG202_FA24_FE_307014_.html</span>
+                        <span class="text-sm text-gray-400">Tệp HTML - Kỳ FA24 (Final Exam)</span>
+                    </div>
+                    <div class="ml-auto text-gray-400">
+                        &gt;
+                    </div>
+                </a>
+            </li>
+
+            <!-- Tệp 2 -->
+            <li>
+                <a href="OSG202_FA24_RE_722844_.html" class="flex items-center p-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-[1.02]">
+                    <div class="mr-4">
+                        <!-- Biểu tượng tài liệu -->
+                        <svg class="w-6 h-6 text-primary-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="text-lg font-medium truncate block">OSG202_FA24_RE_722844_.html</span>
+                        <span class="text-sm text-gray-400">Tệp HTML - Kỳ FA24 (Review)</span>
+                    </div>
+                    <div class="ml-auto text-gray-400">
+                        &gt;
+                    </div>
+                </a>
+            </li>
+
+            <!-- Tệp 3 -->
+            <li>
+                <a href="OSG202_SP25_FE_834868.html" class="flex items-center p-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-[1.02]">
+                    <div class="mr-4">
+                        <!-- Biểu tượng tài liệu -->
+                        <svg class="w-6 h-6 text-primary-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="text-lg font-medium truncate block">OSG202_SP25_FE_834868.html</span>
+                        <span class="text-sm text-gray-400">Tệp HTML - Kỳ SP25 (Final Exam)</span>
+                    </div>
+                    <div class="ml-auto text-gray-400">
+                        &gt;
+                    </div>
+                </a>
+            </li>
+
+            <!-- Tệp 4 -->
+            <li>
+                <a href="OSG202_SP25_RE_580677.html" class="flex items-center p-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-[1.02]">
+                    <div class="mr-4">
+                        <!-- Biểu tượng tài liệu -->
+                        <svg class="w-6 h-6 text-primary-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="text-lg font-medium truncate block">OSG202_SP25_RE_580677.html</span>
+                        <span class="text-sm text-gray-400">Tệp HTML - Kỳ SP25 (Review)</span>
+                    </div>
+                    <div class="ml-auto text-gray-400">
+                        &gt;
+                    </div>
+                </a>
+            </li>
+
+            <!-- Tệp 5 -->
+            <li>
+                <a href="OSG202_SU24_B5FE_146098.html" class="flex items-center p-4 bg-gray-700 hover:bg-gray-600 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-[1.02]">
+                    <div class="mr-4">
+                        <!-- Biểu tượng tài liệu -->
+                        <svg class="w-6 h-6 text-primary-blue flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="flex-grow">
+                        <span class="text-lg font-medium truncate block">OSG202_SU24_B5FE_146098.html</span>
+                        <span class="text-sm text-gray-400">Tệp HTML - Kỳ SU24 (Final Exam)</span>
+                    </div>
+                    <div class="ml-auto text-gray-400">
+                        &gt;
+                    </div>
+                </a>
+            </li>
+        </ul>
+        
+        <!-- Chân trang -->
+        <footer class="mt-8 pt-4 border-t border-gray-700 text-center text-sm text-gray-500">
+            Trang điều hướng tự động. Đảm bảo tất cả các tệp đều nằm trong cùng thư mục để hoạt động chính xác.
+        </footer>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz Template - Single & Multiple Choice</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="quiz-style.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
+                <h1 style="margin: 0;">🎓 OSG202 - Summer 2024 Block 5 Final Exam</h1>
+                <div class="timer" id="timer">
+                    ⏱️ <span id="timer-display">00:00</span>
+                </div>
+            </div>
+            <p>Đề thi cuối kỳ môn Operating Systems - Kỳ Summer 2024 Block 5</p>
+            <div class="score-summary">
+                <div class="score-item">
+                    <div class="score-number" id="totalQuestions">0</div>
+                    <div class="score-label">Tổng câu</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number" id="answeredCount">0</div>
+                    <div class="score-label">Đã trả lời</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number" id="correctCount">0</div>
+                    <div class="score-label">Đúng</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-number" id="scorePercentage">0%</div>
+                    <div class="score-label">Điểm số</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-content" id="quizContent">
+            <!-- 
+            Hướng dẫn sử dụng template:
+            1. Thay đổi tiêu đề và mô tả trong phần quiz-header
+            2. Cập nhật mảng questions với câu hỏi của bạn
+            3. Sử dụng type: "single" cho câu hỏi một đáp án
+            4. Sử dụng type: "multiple" cho câu hỏi nhiều đáp án
+            5. Với single choice: correct = index số (vd: 0, 1, 2)
+            6. Với multiple choice: correct = mảng index (vd: [0, 2, 3])
+            
+            Ví dụ câu hỏi single choice:
+            {
+                id: 1,
+                question: "Câu hỏi của bạn?",
+                options: ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
+                correct: 0, // Đáp án đúng là A (index 0)
+                type: "single",
+                explanation: "Giải thích tại sao đáp án A đúng"
+            }
+            
+            Ví dụ câu hỏi multiple choice:
+            {
+                id: 2,
+                question: "Chọn tất cả đáp án đúng:",
+                options: ["Đáp án A", "Đáp án B", "Đáp án C", "Đáp án D"],
+                correct: [0, 2], // Đáp án đúng là A và C
+                type: "multiple",
+                explanation: "Giải thích tại sao A và C đúng"
+            }
+            -->
+        </div>
+
+        <div class="action-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center;">
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                🏠 Về trang chủ
+            </button>
+            <button class="btn btn-primary btn-small" onclick="startTimer()">
+                ▶️ Bắt đầu đếm giờ
+            </button>
+            <button class="btn btn-secondary btn-small" onclick="pauseTimer()">
+                ⏸️ Tạm dừng
+            </button>
+            <button class="btn btn-secondary btn-small" onclick="resetTimerFunc()">
+                🔄 Reset giờ
+            </button>
+            <button class="btn btn-warning" onclick="randomizeQuiz()">
+                🎲 Xáo trộn đề
+            </button>
+            <button class="btn btn-secondary" onclick="resetQuiz()">
+                🔄 Làm lại toàn bộ
+            </button>
+            <button class="btn btn-warning" onclick="exportResults()">
+                💾 Xuất kết quả
+            </button>
+            <button class="btn btn-primary" onclick="showAllAnswers()">
+                👁️ Hiện tất cả đáp án
+            </button>
+            <button class="btn btn-success" onclick="checkAllAnswers()">
+                ✅ Kiểm tra kết quả
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /*
+        ===================================================================
+        📝 QUIZ TEMPLATE - HƯỚNG DẪN SỬ DỤNG
+        ===================================================================
+        
+        🎯 TÍNH NĂNG:
+        ✅ Hỗ trợ câu hỏi Single Choice (chọn 1 đáp án)
+        ✅ Hỗ trợ câu hỏi Multiple Choice (chọn nhiều đáp án)
+        ✅ Tự động khóa câu hỏi sau khi trả lời
+        ✅ Hiển thị giải thích ngay lập tức
+        ✅ Theo dõi điểm số realtime
+        ✅ Responsive design cho mọi thiết bị
+        
+        🔧 CÁCH SỬ DỤNG:
+        1. Thay đổi tiêu đề và mô tả trong phần quiz-header
+        2. Thay thế mảng questions bên dưới bằng câu hỏi của bạn
+        3. Sử dụng type: "single" cho câu hỏi một đáp án
+        4. Sử dụng type: "multiple" cho câu hỏi nhiều đáp án
+        
+        📋 CẤU TRÚC CÂU HỎI:
+        - id: Số thứ tự câu hỏi (duy nhất)
+        - question: Nội dung câu hỏi
+        - options: Mảng các đáp án (tối đa 5 đáp án)
+        - correct: Đáp án đúng (số cho single, mảng cho multiple)
+        - type: "single" hoặc "multiple"
+        - explanation: Giải thích chi tiết
+        
+        💡 LƯU Ý:
+        - Index đáp án bắt đầu từ 0 (A=0, B=1, C=2, D=3, E=4)
+        - Multiple choice cần chọn đủ số đáp án đúng mới được khóa
+        - Giải thích hiển thị ngay sau khi hoàn thành câu hỏi
+        ===================================================================
+        */
+        
+        const questions = [
+// ========== CÂU HỎI 1 ==========
+{
+    id: 1,
+    question: "In the operating system world, what is the main priority of a time-sharing system compared to a multiprogramming system?",
+    options: [
+        "The cost of managing smaller processes",
+        "Increase the CPU's performance",
+        "Response time is smaller",
+        "Reduce the burst time of the process"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì ưu tiên chính của hệ thống chia sẻ thời gian so với hệ thống đa chương là thời gian phản hồi nhỏ hơn."
+},
+
+// ========== CÂU HỎI 2 ==========
+{
+    id: 2,
+    question: "The development of computers has gone through five generations, with various operating systems like FM, UNIX, OS/360, Windows, and Linux. What operating system did users use to control their computer in the first generation of computers?",
+    options: [
+        "This stage does not have an operating system.",
+        "Users used the FM operating system.",
+        "Users used the OS/360 operating system.",
+        "Users used the UNIX operating system."
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì ở thế hệ máy tính đầu tiên, không có hệ điều hành."
+},
+
+// ========== CÂU HỎI 3 ==========
+{
+    id: 3,
+    question: "The CPU is the core part of the computer. What is the simple process model for retrieving instructions from memory and executing them by the CPU?",
+    options: [
+        "Fetch, decode, and execute",
+        "Fetch, execute, and decode",
+        "Decode, fetch, and execute",
+        "Execute, decode, and fetch"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì quy trình đơn giản để lấy lệnh từ bộ nhớ và thực thi bởi CPU là Fetch (tìm nạp), decode (giải mã), và execute (thực thi)."
+},
+
+// ========== CÂU HỎI 4 ==========
+{
+    id: 4,
+    question: "Many popular operating systems, including Windows and Linux, run on multiprocessors. What are the main advantages of multiprocessor systems?",
+    options: [
+        "Increase throughput",
+        "Decrease throughput",
+        "Low-speed communication",
+        "Reduced reliability"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì lợi thế chính của hệ thống đa xử lý là tăng thông lượng."
+},
+
+// ========== CÂU HỎI 5 ==========
+{
+    id: 5,
+    question: "Since operating systems interact closely with hardware, having knowledge of computer hardware helps in understanding them. Computers consist of processors, memory, and I/O devices. Which of the following is not part of the operating system?",
+    options: [
+        "Performance monitor",
+        "Input/output control program",
+        "Job control program",
+        "Supervisor"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì Performance monitor không phải là thành phần của hệ điều hành."
+},
+
+// ========== CÂU HỎI 6 ==========
+{
+    id: 6,
+    question: "In Windows OS, which command is used to create a new directory?",
+    options: [
+        "Mkdir",
+        "Rmdir",
+        "Chdir",
+        "Chmod"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì trong Windows OS, lệnh Mkdir được sử dụng để tạo thư mục mới."
+},
+
+// ========== CÂU HỎI 7 ==========
+{
+    id: 7,
+    question: "In the FIFO page replacement algorithm, which data structure is commonly used to implement the page replacement queue?",
+    options: [
+        "Stack",
+        "Queue",
+        "Linked list",
+        "Array"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì thuật toán thay thế trang FIFO sử dụng cấu trúc dữ liệu hàng đợi (Queue)."
+},
+
+// ========== CÂU HỎI 8 ==========
+{
+    id: 8,
+    question: "A computer has 4GB of RAM, of which the operating system occupies 2GB. The processes are all 1024 MB and have the same characteristics. What percentage of CPU utilization occurs when these programs are idle and waiting for I/O 50% of the time?",
+    options: [
+        "75%",
+        "90%",
+        "1%",
+        "50%"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng. Tính toán: Bộ nhớ khả dụng = 4GB - 2GB = 2GB. Số process có thể chạy = 2GB / 1GB = 2 process. CPU utilization = 1 - (0.5)^2 = 1 - 0.25 = 0.75 = 75%."
+},
+
+// ========== CÂU HỎI 9 ==========
+{
+    id: 9,
+    question: "What is the primary purpose of Process Control Blocks (PCBs) in process management?",
+    options: [
+        "To display information about running processes on the screen.",
+        "To store the user's program and data.",
+        "To maintain information about each process, including its state, program counter, and CPU registers.",
+        "To allocate memory for new processes."
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì mục đích chính của PCB là duy trì thông tin về mỗi tiến trình, bao gồm trạng thái, bộ đếm chương trình và các thanh ghi CPU."
+},
+
+// ========== CÂU HỎI 10 ==========
+{
+    id: 10,
+    question: "Which of the following process state transitions (from-to) is illegal?",
+    options: [
+        "Ready to Blocked (waiting)",
+        "Running to Blocked (waiting)",
+        "Blocked to Ready",
+        "Running to Ready"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì chuyển đổi từ Ready sang Blocked là không hợp lệ. Tiến trình ở trạng thái Ready không thể chuyển trực tiếp sang Blocked."
+},
+
+// ========== CÂU HỎI 11 ==========
+{
+    id: 11,
+    question: "Which of the following best describes the relationship between threads within a single process?",
+    options: [
+        "Threads are completely independent and do not share any resources.",
+        "Threads share the same memory space but have their own registers.",
+        "Threads are separate and isolated from one another.",
+        "Threads are tightly integrated, and they all have their own separate memory space."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì các thread trong cùng một process chia sẻ không gian bộ nhớ nhưng có các thanh ghi riêng."
+},
+
+// ========== CÂU HỎI 12 ==========
+{
+    id: 12,
+    question: "When using the Critical Regions solution, which of the following conditions is NOT necessary?",
+    options: [
+        "Processes entering critical regions must set their speed or number of CPUs.",
+        "Two processes are not in critical regions at the same time.",
+        "A process outside the staging area must not prevent other processes from entering critical regions.",
+        "Processes do not have to wait indefinitely to enter critical regions."
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì việc processes vào critical regions phải thiết lập tốc độ hoặc số CPU KHÔNG phải là điều kiện cần thiết."
+},
+
+// ========== CÂU HỎI 13 ==========
+{
+    id: 13,
+    question: "Which of the following information bits in the page table entry is used to indicate the types of access that are permitted?",
+    options: [
+        "Present/absent bit",
+        "Caching disabled",
+        "Protection bit",
+        "Modified bit"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì Protection bit chỉ ra các loại truy cập được phép."
+},
+
+// ========== CÂU HỎI 14 ==========
+{
+    id: 14,
+    question: "In the Dining Philosophers problem, what do the philosophers represent?",
+    options: [
+        "Real-world philosophers dining in a restaurant.",
+        "Concurrent processes that compete for access to shared resources.",
+        "Philosophical concepts unrelated to computing.",
+        "A form of computer virus."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì trong bài toán Triết gia ăn tối, các triết gia đại diện cho các tiến trình đồng thời cạnh tranh truy cập tài nguyên dùng chung."
+},
+
+// ========== CÂU HỎI 15 ==========
+{
+    id: 15,
+    question: "Which memory management technique involves dividing memory into fixed-sized partitions to accommodate varying process sizes?",
+    options: [
+        "Paging Management",
+        "Contiguous Allocation",
+        "Segmentation",
+        "Virtual Memory Management"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì quản lý phân trang (Paging Management) chia bộ nhớ thành các phân vùng kích thước cố định."
+},
+
+// ========== CÂU HỎI 16 ==========
+{
+    id: 16,
+    question: "Suppose the free memory area has the following sizes in the following order: 10KB, 4KB, 15KB, 18KB, 7KB, 9KB, 13KB, and 20KB. A process that needs 12 KB of memory has been placed into a 20 KB block. Which of the following Memory Management algorithms is applied to the selection process?",
+    options: [
+        "Worst-fit",
+        "First-fit",
+        "Best-fit",
+        "Next-fit"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì First-fit sẽ chọn khối nhớ đầu tiên đủ lớn (20KB) để chứa process 12KB."
+},
+
+// ========== CÂU HỎI 17 ==========
+{
+    id: 17,
+    question: "What technique is not used in the implementation of Virtual Memory?",
+    options: [
+        "Paging",
+        "Mapping",
+        "Segmentation",
+        "Partition"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì Partition KHÔNG được sử dụng trong triển khai bộ nhớ ảo."
+},
+
+// ========== CÂU HỎI 18 ==========
+{
+    id: 18,
+    question: "Which statement best describes the function of virtual memory in the Windows operating system?",
+    options: [
+        "Virtual memory is used to store temporary files created by applications to free up physical RAM.",
+        "Virtual memory allows a larger address space than the physical memory available, by using a combination of RAM and hard disk space.",
+        "Virtual memory is a reserved area on the hard disk used exclusively for storing system files.",
+        "Virtual memory enables the operating system to manage the computer's display settings for multiple monitors."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì bộ nhớ ảo cho phép không gian địa chỉ lớn hơn bộ nhớ vật lý có sẵn, bằng cách sử dụng kết hợp RAM và không gian đĩa cứng."
+},
+
+// ========== CÂU HỎI 19 ==========
+{
+    id: 19,
+    question: "If optimal page replacement is used with four page frames, how many page faults will occur with the reference string 7, 0, 1, 2, 0, 3, 0 if the four frames are initially empty?",
+    options: [
+        "5",
+        "6",
+        "4",
+        "7"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng. Tính toán với chuỗi tham chiếu 7,0,1,2,0,3,0 và 4 khung trang sử dụng thuật toán tối ưu sẽ cho 5 lỗi trang."
+},
+
+// ========== CÂU HỎI 20 ==========
+{
+    id: 20,
+    question: "In which one of the following page replacement algorithms is it possible for the page fault rate to increase even when the number of allocated frames increases?",
+    options: [
+        "FIFO",
+        "LRU",
+        "NRU",
+        "OPT"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì thuật toán thay thế trang FIFO có thể xảy ra hiện tượng Belady's anomaly."
+},
+
+// ========== CÂU HỎI 21 ==========
+{
+    id: 21,
+    question: "What is the primary disadvantage of using a fixed-size page table in a paging system?",
+    options: [
+        "It limits the number of pages a process can have.",
+        "It results in excessive memory consumption.",
+        "It requires a complex page replacement algorithm.",
+        "It leads to inefficient page allocation."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì bảng trang kích thước cố định có nhược điểm chính là tiêu thụ bộ nhớ quá mức."
+},
+
+// ========== CÂU HỎI 22 ==========
+{
+    id: 22,
+    question: "Which of the following best describes the difference between a process and a thread in the context of the Windows operating system?",
+    options: [
+        "A process contains multiple threads and shares resources, while a thread is an independent execution unit within a process.",
+        "A process is a program in execution, while a thread is a sequence of instructions that can execute independently.",
+        "A process and a thread are essentially the same in Windows OS, with no significant difference between them.",
+        "A process represents system resources, while a thread is responsible for user interface interactions in Windows OS."
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì một process chứa nhiều thread và chia sẻ tài nguyên, còn thread là đơn vị thực thi độc lập trong một process."
+},
+
+// ========== CÂU HỎI 23 ==========
+{
+    id: 23,
+    question: "In the context of memory management, what is the primary advantage of segmented memory over paging in memory management?",
+    options: [
+        "Simplified address translation",
+        "Efficient use of memory space",
+        "Reduced overhead in memory management",
+        "Elimination of fragmentation"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì lợi thế chính của bộ nhớ phân đoạn so với phân trang là sử dụng bộ nhớ hiệu quả hơn."
+},
+
+// ========== CÂU HỎI 24 ==========
+{
+    id: 24,
+    question: "In file access systems, random access files are essential for many applications, such as database systems. What two methods are used to specify where to start reading?",
+    options: [
+        "Write and Read",
+        "Write and Seek",
+        "Read and Seek",
+        "Read and Write"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì Read và Seek là hai phương thức được sử dụng để chỉ định nơi bắt đầu đọc."
+},
+
+// ========== CÂU HỎI 25 ==========
+{
+    id: 25,
+    question: "In the context of a file system, how many letters do all current operating systems allow as legal file names?",
+    options: [
+        "Zero to eight",
+        "One to ten",
+        "One to eight",
+        "One to nine"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì trong ngữ cảnh hệ thống file, tất cả hệ điều hành hiện tại cho phép từ một đến tám chữ cái làm tên file hợp lệ."
+},
+
+// ========== CÂU HỎI 26 ==========
+{
+    id: 26,
+    question: "To prevent people from hogging too much disk space, multiuser operating systems often provide a mechanism for enforcing a limit on individual user space. What do we call this mechanism?",
+    options: [
+        "Disk Quota",
+        "Allocation Limit",
+        "Disk Space Limit",
+        "Disk Allocation Limit"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì cơ chế này được gọi là Disk Quota."
+},
+
+// ========== CÂU HỎI 27 ==========
+{
+    id: 27,
+    question: "When a directory has been read, it should be closed to free up internal table space that is",
+    options: [
+        "Close",
+        "Closedir",
+        "Delete",
+        "Opendir"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì lệnh closedir được sử dụng để đóng thư mục sau khi đọc và giải phóng không gian bảng nội bộ."
+},
+
+// ========== CÂU HỎI 28 ==========
+{
+    id: 28,
+    question: "What is fragmentation in the context of file-system implementation?",
+    options: [
+        "A technique for managing directory structures.",
+        "The allocation of memory for file storage.",
+        "The splitting of files or free space into smaller, non-contiguous blocks.",
+        "The arrangement of files on storage devices."
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì phân mảnh trong ngữ cảnh triển khai hệ thống file là sự chia tách file hoặc không gian trống thành các khối nhỏ hơn, không liên tục."
+},
+
+// ========== CÂU HỎI 29 ==========
+{
+    id: 29,
+    question: "When the computer is booted, what is used to read in and execute?",
+    options: [
+        "BIOS, Boot Block",
+        "CPU, BIOS",
+        "BIOS, MBR",
+        "MBR, BIOS"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì khi máy tính khởi động, BIOS và MBR được sử dụng để đọc và thực thi."
+},
+
+// ========== CÂU HỎI 30 ==========
+{
+    id: 30,
+    question: "Sector 0 of the disk is called the _______ and is used to boot the computer.",
+    options: [
+        "DMA",
+        "MBR",
+        "FAT",
+        "NTFS"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì sector 0 của đĩa được gọi là MBR (Master Boot Record) và được sử dụng để khởi động máy tính."
+},
+
+// ========== CÂU HỎI 31 ==========
+{
+    id: 31,
+    question: "Which file access method is often used to optimize access to large files in a file system?",
+    options: [
+        "Sequential access",
+        "Direct access",
+        "Indexed access",
+        "Linked access"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì truy cập trực tiếp (Direct access) thường được sử dụng để tối ưu hóa truy cập các file lớn."
+},
+
+// ========== CÂU HỎI 32 ==========
+{
+    id: 32,
+    question: "In Linux, what is the primary purpose of the /etc directory?",
+    options: [
+        "To store temporary files.",
+        "To manage system boot files.",
+        "To house system configuration files and scripts.",
+        "To store user home directories."
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì trong Linux, mục đích chính của thư mục /etc là chứa các file cấu hình hệ thống và script."
+},
+
+// ========== CÂU HỎI 33 ==========
+{
+    id: 33,
+    question: "In DMA transfer cycle, what is the form of operation called when the DMA controller tells the device to acquire the bus, perform a series of transfers, and then release the bus?",
+    options: [
+        "Fly-by mode.",
+        "Word-at-a-time mode",
+        "Burst mode",
+        "Caching mode"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì trong chu kỳ chuyển DMA, hoạt động khi bộ điều khiển DMA bảo thiết bị chiếm bus, thực hiện một loạt chuyển và sau đó giải phóng bus được gọi là Burst mode."
+},
+
+// ========== CÂU HỎI 34 ==========
+{
+    id: 34,
+    question: "Include(s) every peripheral unit in the system such as disks, clocks, keyboards, displays, and so on.",
+    options: [
+        "I/O devices",
+        "Memory",
+        "CPU",
+        "Software"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì thiết bị I/O bao gồm mọi đơn vị ngoại vi trong hệ thống như đĩa, đồng hồ, bàn phím, màn hình, v.v."
+},
+
+// ========== CÂU HỎI 35 ==========
+{
+    id: 35,
+    question: "What is the purpose of Direct Memory Access (DMA) in I/O hardware?",
+    options: [
+        "To manage device controllers.",
+        "To allocate memory for device drivers.",
+        "To enable devices to transfer data to and from memory without CPU intervention.",
+        "To provide user interfaces for I/O devices."
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì mục đích của DMA là cho phép các thiết bị chuyển dữ liệu đến và từ bộ nhớ mà không cần sự can thiệp của CPU."
+},
+
+// ========== CÂU HỎI 36 ==========
+{
+    id: 36,
+    question: "In memory-mapped I/O, to prevent the situation where the software enters an infinite loop while waiting for a device to become available, what hardware features or mechanisms can be put in place?",
+    options: [
+        "Selectively enable caching",
+        "Selectively disable buffer",
+        "Selectively enable buffer",
+        "Selectively disable caching"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì trong I/O được ánh xạ bộ nhớ, để ngăn phần mềm vào vòng lặp vô hạn khi chờ thiết bị khả dụng, tính năng phần cứng 'Selectively disable caching' có thể được đặt vào."
+},
+
+// ========== CÂU HỎI 37 ==========
+{
+    id: 37,
+    question: "What are the four important issues for I/O software? Choose correct answers.",
+    options: [
+        "Error handling",
+        "Device independence",
+        "Synchronous and Asynchronous",
+        "Uniform naming",
+        "Buffering"
+    ],
+    correct: [0, 1, 2, 4],
+    type: "multiple",
+    explanation: "Đáp án A, B, C, E đúng. Bốn vấn đề quan trọng cho phần mềm I/O là Error handling, Device independence, Synchronous and Asynchronous, và Buffering."
+},
+
+// ========== CÂU HỎI 38 ==========
+{
+    id: 38,
+    question: "In device-independent I/O software, what happens to characters that arrive while the page with the user buffer is being brought in from the disk?",
+    options: [
+        "The buffer is full, there is no place to put them",
+        "The buffer is ready, there is more place to put them",
+        "The buffer is clear, there is more place to put them"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì khi trang chứa buffer người dùng đang được tải từ đĩa, buffer đầy và không có chỗ để đặt các ký tự đến."
+},
+
+// ========== CÂU HỎI 39 ==========
+{
+    id: 39,
+    question: "What are the weaknesses of RAID 0?",
+    options: [
+        "Requires the highest number of disks in RAID modes",
+        "There is no data recovery mechanism",
+        "The unit of data transmitted is at the BIT level",
+        "Does not improve read and write speeds"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì điểm yếu của RAID 0 là không có cơ chế khôi phục dữ liệu."
+},
+
+// ========== CÂU HỎI 40 ==========
+{
+    id: 40,
+    question: "Which type of clock in a computer system keeps track of the current time and date and is typically battery-powered to retain data even when the system is turned off?",
+    options: [
+        "System clock",
+        "CPU clock",
+        "Real-time clock (RTC)",
+        "Network clock"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì Real-time clock (RTC) theo dõi thời gian và ngày hiện tại, thường được cấp nguồn bằng pin để giữ dữ liệu ngay cả khi hệ thống tắt."
+},
+
+// ========== CÂU HỎI 41 ==========
+{
+    id: 41,
+    question: "The first general-purpose electronic computer, the ENIAC, had 18,000 vacuum tubes and consumed watts of power.",
+    options: [
+        "1,400,000",
+        "140,000",
+        "14,000",
+        "1,400"
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì ENIAC tiêu thụ 140,000 watt năng lượng."
+},
+
+// ========== CÂU HỎI 42 ==========
+{
+    id: 42,
+    question: "If a process has begun to burn a Blu-ray, suddenly taking the Blu-ray recorder away from it and giving it to another process will result in a garbled Blu-ray. What does the scenario above indicate?",
+    options: [
+        "It's an Un-preemptable resource",
+        "It's a Preemptable resource",
+        "It's a Non-sharable resource",
+        "It's a Non-preemptable resource"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì đây là tài nguyên không thể chiếm đoạt (Non-preemptable resource)."
+},
+
+// ========== CÂU HỎI 43 ==========
+{
+    id: 43,
+    question: "What is a nonpreemptable resource?",
+    options: [
+        "The one that can be taken away from its current owner with potentially causing failure.",
+        "The one that cannot be taken away from its current owner with potentially causing failure.",
+        "The one that can be taken away from its current owner without potentially causing failure.",
+        "The one that cannot be taken away from its current owner without potentially causing failure."
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì tài nguyên không thể chiếm đoạt là tài nguyên không thể lấy khỏi chủ sở hữu hiện tại mà không gây ra lỗi tiềm ẩn."
+},
+
+// ========== CÂU HỎI 44 ==========
+{
+    id: 44,
+    question: "In the context of resource allocation or resource management models, what does it mean for an arc to be directed from a process to a resource?",
+    options: [
+        "That the process is currently waiting for that resource.",
+        "That the process is currently ready waiting for that resource.",
+        "That the process is currently blocked waiting for that resource.",
+        "That the process is currently running for that resource."
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì một cung được hướng từ một process đến một tài nguyên có nghĩa là process đó hiện đang bị chặn và chờ tài nguyên đó."
+},
+
+// ========== CÂU HỎI 45 ==========
+{
+    id: 45,
+    question: "What does \"no preemption\" imply in the context of deadlocks?",
+    options: [
+        "Resources can be preempted from one process to another.",
+        "Resources cannot be preempted once allocated.",
+        "Processes can be terminated to free up resources.",
+        "Resources are allocated in a circular manner."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì 'no preemption' ngụ ý rằng tài nguyên không thể bị chiếm đoạt một khi đã được cấp phát."
+},
+
+// ========== CÂU HỎI 46 ==========
+{
+    id: 46,
+    question: "What is the Ostrich algorithm?",
+    options: [
+        "A deadlock recovery algorithm",
+        "A deadlock dealing algorithm",
+        "A deadlock detection algorithm",
+        "A deadlock avoidance algorithm"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì thuật toán Ostrich là một thuật toán tránh deadlock."
+},
+
+// ========== CÂU HỎI 47 ==========
+{
+    id: 47,
+    question: "What does a resource allocation graph represent in the context of deadlock detection?",
+    options: [
+        "A graph that shows the number of resources allocated to each process.",
+        "A graph that depicts the processes and resources and their relationships.",
+        "A chart showing the execution order of processes.",
+        "A diagram of CPU scheduling."
+    ],
+    correct: 1,
+    type: "single",
+    explanation: "Đáp án B đúng vì resource allocation graph biểu diễn các process và tài nguyên cùng mối quan hệ của chúng."
+},
+
+// ========== CÂU HỎI 48 ==========
+{
+    id: 48,
+    question: "Who is responsible for the Banker's algorithm?",
+    options: [
+        "Dijkstra",
+        "Zobel",
+        "Newton",
+        "Ostrich"
+    ],
+    correct: 0,
+    type: "single",
+    explanation: "Đáp án A đúng vì Dijkstra chịu trách nhiệm cho thuật toán Banker."
+},
+
+// ========== CÂU HỎI 49 ==========
+{
+    id: 49,
+    question: "Which condition, if not present in the system, can help prevent deadlocks?",
+    options: [
+        "Mutual exclusion",
+        "Hold and wait",
+        "No preemption",
+        "Circular wait"
+    ],
+    correct: 3,
+    type: "single",
+    explanation: "Đáp án D đúng vì nếu điều kiện chờ đợi vòng tròn (Circular wait) không tồn tại thì sẽ giúp ngăn chặn deadlock."
+},
+
+// ========== CÂU HỎI 50 ==========
+{
+    id: 50,
+    question: "Which deadlock condition does \"Take resources away\" attack?",
+    options: [
+        "Hold and wait",
+        "Mutual exclusion",
+        "No preemption",
+        "Circular wait"
+    ],
+    correct: 2,
+    type: "single",
+    explanation: "Đáp án C đúng vì 'Take resources away' tấn công điều kiện không chiếm đoạt (No preemption)."
+}
+];
+    </script>
+    <script src="quiz-script.js"></script>
+</body>
+</html>

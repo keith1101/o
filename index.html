@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Điều Hướng Tệp - OSG202 Quiz Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            line-height: 1.6;
+            background: #e8d4a2;
+            color: #3e2731;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #f9f5e8;
+            border: 4px solid #3e2731;
+            border-radius: 12px;
+            box-shadow: 6px 6px 0px #3e2731;
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #7fb069 0%, #5a9367 100%);
+            border-bottom: 3px solid #3e2731;
+            padding: 12px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1em;
+            color: #f4e4c1;
+            text-shadow: 2px 2px 0px #3e2731;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            color: #f4e4c1;
+            margin: 0;
+        }
+
+        .quiz-list {
+            padding: 20px;
+        }
+
+        .quiz-item {
+            background: #f4e4c1;
+            border: 3px solid #3e2731;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 3px 3px 0px #3e2731;
+            text-decoration: none;
+            display: block;
+            color: #3e2731;
+        }
+
+        .quiz-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 5px 5px 0px #3e2731;
+            background: #ffe9c9;
+        }
+
+        .quiz-item-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .quiz-icon {
+            width: 24px;
+            height: 24px;
+            color: #d4793c;
+            flex-shrink: 0;
+        }
+
+        .quiz-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #3e2731;
+        }
+
+        .quiz-subtitle {
+            font-size: 1em;
+            color: #5a4a3a;
+            padding-left: 36px;
+        }
+
+        footer {
+            background: #c98d62;
+            border-top: 3px solid #3e2731;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 0.95em;
+            color: #3e2731;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 0.8em;
+            }
+            header p {
+                font-size: 1em;
+            }
+            .quiz-title {
+                font-size: 1.05em;
+            }
+            .quiz-subtitle {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 OSG202 Quiz Collection</h1>
+            <p>Chọn bài kiểm tra để bắt đầu</p>
+        </header>
+
+        <div class="quiz-list">
+            <a href="OSG202_FA24_FE_307014_.html" class="quiz-item">
+                <div class="quiz-item-header">
+                    <svg class="quiz-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="quiz-title">OSG202_FA24_FE_307014_.html</span>
+                </div>
+                <div class="quiz-subtitle">📝 Fall 2024 - Final Exam</div>
+            </a>
+
+            <a href="OSG202_FA24_RE_722844_.html" class="quiz-item">
+                <div class="quiz-item-header">
+                    <svg class="quiz-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="quiz-title">OSG202_FA24_RE_722844_.html</span>
+                </div>
+                <div class="quiz-subtitle">📖 Fall 2024 - Review</div>
+            </a>
+
+            <a href="OSG202_SP25_FE_834868.html" class="quiz-item">
+                <div class="quiz-item-header">
+                    <svg class="quiz-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="quiz-title">OSG202_SP25_FE_834868.html</span>
+                </div>
+                <div class="quiz-subtitle">📝 Spring 2025 - Final Exam</div>
+            </a>
+
+            <a href="OSG202_SP25_RE_580677.html" class="quiz-item">
+                <div class="quiz-item-header">
+                    <svg class="quiz-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="quiz-title">OSG202_SP25_RE_580677.html</span>
+                </div>
+                <div class="quiz-subtitle">📖 Spring 2025 - Review</div>
+            </a>
+
+            <a href="OSG202_SU24_B5FE_146098.html" class="quiz-item">
+                <div class="quiz-item-header">
+                    <svg class="quiz-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <span class="quiz-title">OSG202_SU24_B5FE_146098.html</span>
+                </div>
+                <div class="quiz-subtitle">📝 Summer 2024 Block 5 - Final Exam</div>
+            </a>
+        </div>
+
+        <footer>
+            🎮 OSG202 Quiz Navigation • All files must be in the same directory
+        </footer>
+    </div>
+</body>
+</html>

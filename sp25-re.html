@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSG202 - Spring 2025 Review Exam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="quiz-style.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 15px;">
+                <h1 style="margin: 0;">📝 OSG202 - Spring 2025 Review Exam</h1>
+                <div class="timer" id="timer">⏱️ <span id="timer-display">00:00</span></div>
+            </div>
+            <p>Đề luyện tập - Kỳ Spring 2025</p>
+            <div class="score-summary">
+                <div class="score-item"><div class="score-number" id="totalQuestions">0</div><div class="score-label">Tổng câu</div></div>
+                <div class="score-item"><div class="score-number" id="answeredCount">0</div><div class="score-label">Đã trả lời</div></div>
+                <div class="score-item"><div class="score-number" id="correctCount">0</div><div class="score-label">Đúng</div></div>
+                <div class="score-item"><div class="score-number" id="scorePercentage">0%</div><div class="score-label">Điểm số</div></div>
+            </div>
+        </div>
+        <div class="quiz-content" id="quizContent"></div>
+        <div class="action-buttons" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: center;">
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">🏠 Về trang chủ</button>
+            <button class="btn btn-primary btn-small" onclick="startTimer()">▶️ Bắt đầu đếm giờ</button>
+            <button class="btn btn-secondary btn-small" onclick="pauseTimer()">⏸️ Tạm dừng</button>
+            <button class="btn btn-secondary btn-small" onclick="resetTimerFunc()">🔄 Reset giờ</button>
+            <button class="btn btn-warning" onclick="randomizeQuiz()">🎲 Xáo trộn đề</button>
+            <button class="btn btn-secondary" onclick="resetQuiz()">🔄 Làm lại toàn bộ</button>
+            <button class="btn btn-warning" onclick="exportResults()">💾 Xuất kết quả</button>
+            <button class="btn btn-primary" onclick="showAllAnswers()">👁️ Hiện tất cả đáp án</button>
+            <button class="btn btn-success" onclick="checkAllAnswers()">✅ Kiểm tra kết quả</button>
+        </div>
+    </div>
+    <script src="sp25-re/data.js"></script>
+    <script src="quiz-script.js"></script>
+</body>
+</html>

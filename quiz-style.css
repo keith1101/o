@@ -27,8 +27,6 @@ header {
     background: linear-gradient(135deg, #7fb069 0%, #5a9367 100%);
     border-bottom: 3px solid #3e2731;
     padding: 10px 15px;
-    position: sticky;
-    top: 0;
     z-index: 100;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
@@ -279,8 +277,6 @@ footer {
     background: #c98d62;
     padding: 10px 15px;
     border-top: 3px solid #3e2731;
-    position: sticky;
-    bottom: 0;
     box-shadow: 0 -2px 4px rgba(0,0,0,0.2);
 }
 

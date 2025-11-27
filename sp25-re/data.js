@@ -242,9 +242,9 @@ const questions = [
             "C. 2-KB page",
             "D. 4-KB page"
         ],
-        correct: 3,
+        correct: 1,
         type: "single",
-        explanation: "Đáp án tài liệu chọn D (4KB). <br><b>Lưu ý:</b> Về mặt tính toán lý thuyết: 32 bit tổng - 10 bit top - 12 bit second = 10 bit offset. 2^10 = 1024 bytes = 1KB (Đáp án B). Tuy nhiên, key của đề chọn D, có thể đề bài có nhầm lẫn về số bit hoặc ám chỉ hệ thống chuẩn x86 (10-10-12)."
+        explanation: "Đáp án B (1KB). Phân tích: Địa chỉ ảo 32-bit, trừ đi 10-bit (top) và 12-bit (second) thì còn lại 10-bit cho phần Offset. Kích thước trang = $2^{10}$ = 1024 bytes = 1KB. Đáp án D (4KB) trong tài liệu gốc là sai về mặt tính toán."
     },
     {
         id: 20,
@@ -502,9 +502,9 @@ const questions = [
             "C. SJF",
             "D. Elevator"
         ],
-        correct: 3,
+        correct: 0,
         type: "single",
-        explanation: "Đáp án tài liệu chọn D (Elevator). <br><b>Lưu ý:</b> Thứ tự di chuyển `53 -> 98 -> 37 -> 14 -> 65 -> 67` chính xác là thứ tự đến của request, đây là đặc điểm của <b>FCFS (A)</b>. Thuật toán Elevator sẽ sắp xếp lại thứ tự (ví dụ: 53 -> 65 -> 67 -> 98 -> 37...). Có thể tài liệu bị sai đáp án hoặc sai mô tả chuyển động."
+        explanation: "Đáp án A (FCFS). Thứ tự di chuyển đầu đọc (53 -> 98 -> 37...) hoàn toàn trùng khớp với thứ tự yêu cầu trong hàng đợi. Đây là đặc điểm nhận dạng của FCFS (First Come First Served). Đáp án D (Elevator) trong tài liệu gốc là sai."
     },
     {
         id: 40,
